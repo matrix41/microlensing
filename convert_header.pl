@@ -34,10 +34,13 @@ open (my $fh, '<', $filename) or die "\nCould not open file '$filename' $!\n";
 my @array = <$fh>;
 close ($fh);
 
+# This FOR-loop will iterate through the old light curve file. 
 for ( my $i = 0 ; $i <= $#array ; $i++ )
 {
+# This FOR-loop will iterate through the keywords array for each line of the light curve file. 
     for ( my $j = 0 ; $j <= $#keywords ; $j++ )
     {
+# This IF-block will check if a line in the light curve file matches one of the keywords.  
         if ( $array[$i] =~ /^\\$keywords[$j]\s+/ )
         {
             print "$array[$i]";
