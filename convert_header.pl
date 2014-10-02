@@ -46,5 +46,10 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
             print "$array[$i]";
         }
     }
+# This IF-block will print a line from the light curve file if it is a header or a line of data. 
+    if ( ( $array[$i] =~ /^\|/ ) || ( $array[$i] =~ /^\s+/ ) )
+    {
+        print "$array[$i]";
+    }
 }
 
