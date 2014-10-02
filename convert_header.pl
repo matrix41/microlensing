@@ -20,7 +20,7 @@ push(@keywords, "TELESCOPE"); #
 push(@keywords, "INSTRUMENT"); # 
 push(@keywords, "TIME_SERIES_DATA_FILTER"); # 
 push(@keywords, "OBSERVATORY_SITE"); # 
-push(@keywords, "COLUMN_ID"); # 
+push(@keywords, "COLUMN_JD"); # 
 push(@keywords, "COLUMN_RELATIVE_MAGNITUDE"); # 
 push(@keywords, "COLUMN_RELATIVE_MAGNITUDE_UNCERTAINTY"); # 
 
