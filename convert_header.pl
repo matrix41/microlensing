@@ -36,13 +36,12 @@ close ($fh);
 
 for ( my $i = 0 ; $i <= $#array ; $i++ )
 {
-	for ( my $j = 0 ; $j <= $#keywords ; $j++ )
-	{
-        if ( $array[$i] =~ /^\\$keywords[$j]/ )
-        { 
+    for ( my $j = 0 ; $j <= $#keywords ; $j++ )
+    {
+        if ( $array[$i] =~ /^\\$keywords[$j]\s+/ )
+        {
             print "$array[$i]";
         }
-	}
+    }
 }
-
 
