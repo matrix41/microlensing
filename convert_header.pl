@@ -29,10 +29,16 @@ my $filename = $ARGV[0];
 chomp $filename;
 
 
-#Declare new filehandle and associated it with filename
+# Declare new filehandle and associated it with filename
 open (my $fh, '<', $filename) or die "\nCould not open file '$filename' $!\n";
 my @array = <$fh>;
 close ($fh);
+
+# Declare new output filehandle for output file 
+my @base = split /\./, $filename;
+my $newfilename = $base[0] . ".new";
+open (my $oh, '>', $newfilename) or die "\nCould not open file '$newfilename' $!\n";
+
 
 # This FOR-loop will iterate through the old light curve file. 
 for ( my $i = 0 ; $i <= $#array ; $i++ )
@@ -43,13 +49,16 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
 # This IF-block will check if a line in the light curve file matches one of the keywords.  
         if ( $array[$i] =~ /^\\$keywords[$j]\s+/ )
         {
-            print "$array[$i]";
+            print     "$array[$i]";
+            print $oh "$array[$i]";
         }
     }
 # This IF-block will print a line from the light curve file if it is a header or a line of data. 
     if ( ( $array[$i] =~ /^\|/ ) || ( $array[$i] =~ /^\s+/ ) )
     {
-        print "$array[$i]";
+        print     "$array[$i]";
+        print $oh "$array[$i]";
     }
 }
 
+close ($oh);
