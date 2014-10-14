@@ -43,6 +43,39 @@ open (my $oh, '>', $newfilename) or die "\nCould not open file '$newfilename' $!
 # This FOR-loop will iterate through the old light curve file. 
 for ( my $i = 0 ; $i <= $#array ; $i++ )
 {
+    if ( $array[$i] =~ /#0#/ )
+    {
+#        print "\n\n ANDROMEDA 0 \n\n";
+        $array[$i] =~ s/"#0#"/"mag"/g;
+    }
+    if ( $array[$i] =~ /#12#/ )
+    {
+        print "\n\n ANDROMEDA 12 \n\n";
+  }
+    if ( $array[$i] =~ /#13#/ )
+    {
+        print "\n\n ANDROMEDA 13 \n\n";
+    }
+    if ( $array[$i] =~ /#14#/ )
+    {
+#        print "\n\n ANDROMEDA 14 \n\n";
+        $array[$i] =~ s/"#14#"/"Warsaw University Telescope"/g;
+    }
+    if ( $array[$i] =~ /#15#/ )
+    {
+#        print "\n\n ANDROMEDA 15 \n\n";
+        $array[$i] =~ s/"#15#"/"OGLE-III"/g;
+    }
+    if ( $array[$i] =~ /#16#/ )
+    {
+ #       print "\n\n ANDROMEDA 16 \n\n";
+        $array[$i] =~ s/"#16#"/"I (Johnson)"/g;
+    }
+    if ( $array[$i] =~ /#17#/ )
+    {
+#        print "\n\n ANDROMEDA 17 \n\n";
+        $array[$i] =~ s/"#17#"/"Las Campanas Observatory"/g;
+    }
 # This FOR-loop will iterate through the keywords array for each line of the light curve file. 
     for ( my $j = 0 ; $j <= $#keywords ; $j++ )
     {
@@ -56,6 +89,14 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
 # This IF-block will print a line from the light curve file if it is a header or a line of data. 
     if ( ( $array[$i] =~ /^\|/ ) || ( $array[$i] =~ /^\s+/ ) )
     {
+        if ( $array[$i] =~ /#22#/ )
+        {
+            $array[$i] =~ s/#22#/RELATIVE_MAGNITUDE/g;
+        }
+        if ( $array[$i] =~ /#23#/ )
+        {
+            $array[$i] =~ s/#23#/MAGNITUDE_UNCERTAINTY/g;
+        }
         print     "$array[$i]";
         print $oh "$array[$i]";
     }
