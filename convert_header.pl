@@ -9,11 +9,19 @@ use Tie::IxHash;
 my @keywords;
 push(@keywords, "STAR_ID"); # 
 push(@keywords, "DATA_CATEGORY"); # 
+push(@keywords, "RA"); # 
+push(@keywords, "RA_UNITS"); # 
+push(@keywords, "DEC"); # 
+push(@keywords, "DEC_UNITS"); # 
+push(@keywords, "EQUINOX"); # 
 push(@keywords, "NUMBER_OF_POINTS"); # 
 push(@keywords, "TIME_REFERENCE_FRAME"); # 
 push(@keywords, "MINIMUM_DATE"); # 
 push(@keywords, "MAXIMUM_DATE"); # 
-push(@keywords, "DISPERSION_MEAN_UNITS"); # 
+push(@keywords, "MAXIMUM_DATE_UNITS"); # 
+push(@keywords, "MINIMUM_VALUE"); # 
+push(@keywords, "MAXIMUM_VALUE"); # 
+push(@keywords, "MAXIMUM_VALUE_UNITS"); # 
 push(@keywords, "REFERENCES"); # 
 push(@keywords, "BIBCODES"); # 
 push(@keywords, "TELESCOPE"); # 
