@@ -30,7 +30,7 @@ push(@keywords, "TIME_SERIES_DATA_FILTER"); #
 push(@keywords, "OBSERVATORY_SITE"); # 
 push(@keywords, "COLUMN_JD"); # 
 push(@keywords, "COLUMN_RELATIVE_MAGNITUDE"); # 
-push(@keywords, "COLUMN_RELATIVE_MAGNITUDE_UNCERTAINTY"); # 
+push(@keywords, "COLUMN_MAGNITUDE_UNCERTAINTY"); # 
 
 
 my $filename = $ARGV[0];
@@ -90,6 +90,14 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
 # This IF-block will check if a line in the light curve file matches one of the keywords.  
         if ( $array[$i] =~ /^\\$keywords[$j]\s+/ )
         {
+            if ( $array[$i] =~ /MAXIMUM_DATE_UNITS/ )
+            {
+                $array[$i] =~ s/MAXIMUM_DATE_UNITS/DATE_UNITS        /g;
+            }
+            if ( $array[$i] =~ /MAXIMUM_VALUE_UNITS/ )
+            {
+                $array[$i] =~ s/MAXIMUM_VALUE_UNITS/VALUE_UNITS        /g;
+            }
             print     "$array[$i]";
             print $oh "$array[$i]";
         }
