@@ -102,8 +102,8 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
             print $oh "$array[$i]";
         }
     }
-# This IF-block will print a line from the light curve file if it is a header or a line of data. 
-    if ( ( $array[$i] =~ /^\|/ ) || ( $array[$i] =~ /^\s+/ ) )
+# This IF-block will print a line from the light curve file if it is a header. 
+    if ( ( $array[$i] =~ /^\|/ ) )
     {
         if ( $array[$i] =~ /#22#/ )
         {
@@ -115,6 +115,14 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
         }
         print     "$array[$i]";
         print $oh "$array[$i]";
+    }
+# This IF-block will print a line from the light curve file if it is a line of data. 
+    if ( ( $array[$i] =~ /^\s+/ ) )
+    {
+        my @lightcurve = split /\s+/, $array[$i];
+        print     "$lightcurve[0]          $lightcurve[1]        $lightcurve[2]        $lightcurve[3]  $lightcurve[4]\n";
+        print $oh "$lightcurve[0]          $lightcurve[1]        $lightcurve[2]        $lightcurve[3]  $lightcurve[4]\n";
+
     }
 }
 
