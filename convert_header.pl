@@ -6,8 +6,11 @@ use Tie::IxHash;
 
 # Define
 my $s1;
+my $s1b;
 my $s2;
+my $s2b;
 my $s3;
+my $placeholder = 0;
 
 my @keywords;
 push(@keywords, "STAR_ID"); # 
@@ -58,6 +61,7 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
     {
 #        print "\n\n ANDROMEDA 0 \n\n";
         $array[$i] =~ s/"#0#"/"mag"/g;
+        $placeholder = 1; # activates placeholder flag 
     }
     if ( $array[$i] =~ /#12#/ )
     {
@@ -134,7 +138,7 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
                 }
             }            
         }
-        if ( $array[$i] =~ /\|\s+\|\s+\|\s+\|\s+\|/ )
+        if  ( ( $array[$i] =~ /\|\s+\|\s+\|\s+\|\s+\|/ ) && ( $placeholder == 1 ) )
         {
             my $s4 .= "";
             my $s5 .= "";
@@ -158,12 +162,24 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
     {
         my @lightcurve = split /\s+/, $array[$i];
         $s1 .= (" " x ( (length("RELATIVE_MAGNITUDE") - length("#22#") + 2 ) ) );
+        $s1b .= (" " x ( (length("RELATIVE_MAGNITUDE") - length("#22#") -1 ) ) );
         $s2 .= (" " x ( (length("MAGNITUDE_UNCERTAINTY") - length("#23#") + 2 ) ) );
+        $s2b .= (" " x ( (length("MAGNITUDE_UNCERTAINTY") - length("#23#") - 0 ) ) );
         $s3 .= (" " x ( 9 ) );
-        print     "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
-        print $oh "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
+        if ( $placeholder == 1 )
+        {
+            print     "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
+            print $oh "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
+        }
+        else
+        {
+            print     "  $lightcurve[1] $s1b $lightcurve[2] $s2b $lightcurve[3] $s3 $lightcurve[4]\n";
+            print $oh "  $lightcurve[1] $s1b $lightcurve[2] $s2b $lightcurve[3] $s3 $lightcurve[4]\n";
+        }
         $s1 = "";
+        $s1b = "";
         $s2 = "";
+        $s2b = "";
         $s3 = "";
     }
 }
