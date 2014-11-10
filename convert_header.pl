@@ -11,6 +11,7 @@ my $s2;
 my $s2b;
 my $s3;
 my $placeholder = 0;
+my $JD;
 
 my @keywords;
 push(@keywords, "STAR_ID"); # 
@@ -66,7 +67,7 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
     if ( $array[$i] =~ /#12#/ )
     {
 #        print "\n\n ANDROMEDA 12 \n\n";
-  }
+    }
     if ( $array[$i] =~ /#13#/ )
     {
 #        print "\n\n ANDROMEDA 13 \n\n";
@@ -91,10 +92,30 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
 #        print "\n\n ANDROMEDA 17 \n\n";
         $array[$i] =~ s/"#17#"/"Las Campanas Observatory"/g;
     }
+    if ( $array[$i] =~ /#22#/ )
+    {
+        $array[$i] =~ s/"#22#"/RELATIVE_MAGNITUDE/g;
+    }
+    if ( $array[$i] =~ /#23#/ )
+    {
+        $array[$i] =~ s/"#23#"/MAGNITUDE_UNCERTAINTY/g;
+    }
+    if ( $array[$i] =~ /COLUMN_JD/ )
+    {
+#        CAN I GREP OR SED JUST A STRING OF NUMBERS, LIKE \d+ ????
+         $array[$i] =~ m/\d+/g; # this line will extract the Julian date 
+                                # as a string of digits and put it in $& 
+#         print "Found '$&'\n"; # DEBUG statement to show match regex is working 
+         $JD = $&;
+        # while ($string =~ m/regex/g) {
+        #   print "Found '$&'.  Next attempt at character " . pos($string)+1 . "\n";
+        # }
+    }
 # This FOR-loop will iterate through the keywords array for each line of the light curve file. 
     for ( my $j = 0 ; $j <= $#keywords ; $j++ )
     {
-# This IF-block will check if a line in the light curve file matches one of the keywords.  
+# This IF-block will check if a line in the light curve file matches one of the keywords. 
+# If there is a match, then extract it and print it out to the new file.   
         if ( $array[$i] =~ /^\\$keywords[$j]\s+/ )
         {
             if ( $array[$i] =~ /MAXIMUM_DATE_UNITS/ )
@@ -138,21 +159,47 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
                 }
             }            
         }
+        if ( $array[$i] =~ /\s\s\s\s\s\s\s\s\sJD\s\|/ )
+        {
+            # my $s11 .= "";
+            # $s11 .= (" " x 9 );
+            $array[$i] =~ s/\s\s\s\s\s\s\s\s\sJD\s\|/           JD \|/g;
+            # $s11 = undef;
+# this FOR-loop will fix the next row 
+            for ( my $n = 0 ; $n <= $#array ; $n++ )
+            {
+                if ( $array[$n] =~ /\|\s\s\s\s\s\s\sreal\s\|/ )
+                {
+                    # $s1 .= (" " x 5 );
+                    $array[$n] =~ s/\|\s\s\s\s\s\s\sreal\s\|/\|         real \|/g;
+                    # $s1 = "";
+                }
+            }
+        }
+# this IF block will delete the fourth column (part 1)
+        if ( $array[$i] =~ /\s\sACCEPTED\s\|/ )
+        {
+            $array[$i] =~ s/\s\sACCEPTED\s\|//g;
+        }
+# this IF block will delete the fourth column (part 2)
+        if ( $array[$i] =~ /\s\s\s\s\s\s\sint\s\|/ )
+        {
+            $array[$i] =~ s/\s\s\s\s\s\s\sint\s\|//g;
+        }
+# this IF block will calculate the correct number of new spacing for the 
+# last row of the header 
         if  ( ( $array[$i] =~ /\|\s+\|\s+\|\s+\|\s+\|/ ) && ( $placeholder == 1 ) )
         {
             my $s4 .= "";
             my $s5 .= "";
             my $s6 .= "";
-            my $s7 .= "";
-            $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 6 ) );
-            $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 5 ) );
-            $s6 .= (" " x 12);
-            $s7 .= (" " x 11);
-            $array[$i] =~ s/\|\s+\|\s+\|\s+\|\s+\|/\|$s6\|$s4\|$s5\|$s7\|/g;
+            $s6 .= (" " x 14); # JD column 
+            $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 6 ) ); # RELATIVE_MAGNITUDE column 
+            $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 5 ) ); # MAGNITUDE_UNCERTAINTY column 
+            $array[$i] =~ s/\|\s+\|\s+\|\s+\|\s+\|/\|$s6\|$s4\|$s5\|/g;
             $s4 = undef;
             $s5 = undef;
             $s6 = undef;
-            $s7 = undef;
         }
         print     "$array[$i]";
         print $oh "$array[$i]";
@@ -168,8 +215,8 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
         $s3 .= (" " x ( 9 ) );
         if ( $placeholder == 1 )
         {
-            print     "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
-            print $oh "  $lightcurve[1] $s1 $lightcurve[2] $s2 $lightcurve[3] $s3 $lightcurve[4]\n";
+            print     "  ", sprintf("%.5f", $JD+$lightcurve[1]), " $s1 $lightcurve[2] $s2 $lightcurve[3]\n";
+            print $oh "  ", sprintf("%.5f", $JD+$lightcurve[1]), " $s1 $lightcurve[2] $s2 $lightcurve[3]\n";
         }
         else
         {
@@ -183,5 +230,5 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
         $s3 = "";
     }
 }
-
+    
 close ($oh);
