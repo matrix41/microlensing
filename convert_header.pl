@@ -12,6 +12,7 @@ my $s2b;
 my $s3;
 my $placeholder = 0;
 my $JD;
+my $narrower_col = 0;
 
 my @keywords;
 push(@keywords, "STAR_ID"); # 
@@ -133,32 +134,67 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
 # This IF-block will print a line from the light curve file if it is a header. 
     if ( ( $array[$i] =~ /^\|/ ) )
     {
+        # for ( my $z = 0 ; $z <= $#array ; $z++ )
+        # {
+
+        # }
         if ( $array[$i] =~ /#22#/ )
         {
             $array[$i] =~ s/#22#/RELATIVE_MAGNITUDE/g;
-            for ( my $m = 0 ; $m <= $#array ; $m++ )
-            {
-                if ( $array[$m] =~ /\|\s\s\s\s\sreal\s\|/ )
-                {
-                    $s1 .= (" " x ( (length("RELATIVE_MAGNITUDE") ) ) );
-                    $array[$m] =~ s/\|\s\s\s\s\sreal/\|$s1 real/g;
-                    $s1 = "";
-                }
-            }            
         }
         if ( $array[$i] =~ /#23#/ )
         {
             $array[$i] =~ s/#23#/MAGNITUDE_UNCERTAINTY/g;
-            for ( my $n = 0 ; $n <= $#array ; $n++ )
-            {
-                if ( $array[$n] =~ /\|\s\s\s\sreal\s\|/ )
-                {
-                    $s1 .= (" " x ( (length("MAGNITUDE_UNCERTAINTY") - 1 ) ) );
-                    $array[$n] =~ s/\|\s\s\s\sreal/\|$s1 real/g;
-                    $s1 = "";
-                }
-            }            
         }
+
+        if (  ( $array[$i] =~ /\|\s\s\s\s\sreal\s\|\s\s\s\sreal\s\|/ ) ) # 5 / 4
+        {
+            $s1 .= (" " x (length("RELATIVE_MAGNITUDE") ) );
+            $s2 .= (" " x (length("MAGNITUDE_UNCERTAINTY") - 1 ) );
+
+            $array[$i] =~ s/\|\s\s\s\s\sreal\s\|\s\s\s\sreal\s\|/\|$s1 real \|$s2 real \|/g;
+
+            $s2 = "";
+            $s1 = "";
+        }
+        elsif ( $array[$i] =~ /\|\s\s\s\sreal\s\|\s\s\sreal\s\|/ ) # 4 / 3 
+        {
+            $narrower_col = 1; # this is a flag that I need to set in order for another 
+                               # block of code to run 
+            $s1 .= (" " x (length("RELATIVE_MAGNITUDE") - 1 ) );
+            $s2 .= (" " x (length("MAGNITUDE_UNCERTAINTY") - 2 ) );
+
+            $array[$i] =~ s/\|\s\s\s\sreal\s\|\s\s\sreal\s\|/\|$s1 real \|$s2 real \|/g;
+
+            $s2 = "";
+            $s1 = "";
+        }
+        else
+        {
+            $s1 = "";
+            $s2 = "";
+        }
+
+            # for ( my $n = 0 ; $n <= $#array ; $n++ )
+            # {
+            #     if ( $array[$n] =~ /\|\s\s\s\sreal\s\|/ )
+            #     {
+            #         $s1 .= (" " x ( (length("MAGNITUDE_UNCERTAINTY") - 1 ) ) );
+            #         $array[$n] =~ s/\|\s\s\s\sreal/\|$s1 real/g;
+            #         $s1 = "";
+            #     }
+            # }            
+            # for ( my $m = 0 ; $m <= $#array ; $m++ )
+            # {
+            #     if ( $array[$m] =~ /\|\s\s\s\s\sreal\s\|/ )
+            #     {
+            #         $s1 .= (" " x ( (length("RELATIVE_MAGNITUDE") ) ) );
+            #         $array[$m] =~ s/\|\s\s\s\s\sreal/\|$s1 real/g;
+            #         $s1 = "";
+            #     }
+            # }            
+
+
         if ( $array[$i] =~ /\s\s\s\s\s\s\s\s\sJD\s\|/ )
         {
             # my $s11 .= "";
@@ -194,8 +230,31 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
             my $s5 .= "";
             my $s6 .= "";
             $s6 .= (" " x 14); # JD column 
-            $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 6 ) ); # RELATIVE_MAGNITUDE column 
-            $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 5 ) ); # MAGNITUDE_UNCERTAINTY column 
+            if ( $narrower_col == 1 )
+            {
+                $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 5 ) ); # RELATIVE_MAGNITUDE column 
+                $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 4 ) ); # MAGNITUDE_UNCERTAINTY column 
+            }
+            else
+            {
+                $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 6 ) ); # RELATIVE_MAGNITUDE column 
+                $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 5 ) ); # MAGNITUDE_UNCERTAINTY column 
+            }
+
+
+            $array[$i] =~ s/\|\s+\|\s+\|\s+\|\s+\|/\|$s6\|$s4\|$s5\|/g;
+            $s4 = undef;
+            $s5 = undef;
+            $s6 = undef;
+        }
+        else
+        {
+            my $s4 .= "";
+            my $s5 .= "";
+            my $s6 .= "";
+            $s6 .= (" " x 14); # JD column 
+            $s4 .= (" " x (length("RELATIVE_MAGNITUDE") + 3 ) ); # RELATIVE_MAGNITUDE column 
+            $s5 .= (" " x (length("MAGNITUDE_UNCERTAINTY") + 3 ) ); # MAGNITUDE_UNCERTAINTY column 
             $array[$i] =~ s/\|\s+\|\s+\|\s+\|\s+\|/\|$s6\|$s4\|$s5\|/g;
             $s4 = undef;
             $s5 = undef;
@@ -220,8 +279,8 @@ for ( my $i = 0 ; $i <= $#array ; $i++ )
         }
         else
         {
-            print     "  $lightcurve[1] $s1b $lightcurve[2] $s2b $lightcurve[3] $s3 $lightcurve[4]\n";
-            print $oh "  $lightcurve[1] $s1b $lightcurve[2] $s2b $lightcurve[3] $s3 $lightcurve[4]\n";
+            print     "  ", sprintf("%.5f", $JD+$lightcurve[1]), "$s1b $lightcurve[2] $s2b $lightcurve[3]\n";
+            print $oh "  ", sprintf("%.5f", $JD+$lightcurve[1]), "$s1b $lightcurve[2] $s2b $lightcurve[3]\n";
         }
         $s1 = "";
         $s1b = "";
